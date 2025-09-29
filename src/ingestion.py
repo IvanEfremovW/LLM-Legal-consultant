@@ -2,11 +2,11 @@ import re
 from langchain_core.documents import Document
 from langchain_core.documents import Document
 from langchain_chroma import Chroma
-from langchain_community.embeddings import HuggingFaceBgeEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from src.config import DATA_DIR
 from src.config import CHROMA_PATH, EMBEDDING_MODEL
-
 
 def load_documents() -> list[Document]:
     """
@@ -60,11 +60,29 @@ def get_chroma_vectorstore() -> Chroma:
         Chroma: ChromaDB index.
     """
     
-    embeddings = HuggingFaceBgeEmbeddings(
+    embeddings = HuggingFaceEmbeddings(
         model_name=EMBEDDING_MODEL
     )
     
     return Chroma(
         persist_directory=str(CHROMA_PATH),
         embedding_function=embeddings
-    ) 
+    )
+
+def ingest_documents():
+    
+    documents = load_documents()
+
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=500,
+        chunk_overlap=50,
+        separators=["\n\n", "\n", " ", ""]
+    )
+    
+    chunks = text_splitter.split_documents(documents)
+
+    vector_store = get_chroma_vectorstore()
+    vector_store.add_documents(chunks)
+
+if __name__ == "__main__":
+    ingest_documents()
