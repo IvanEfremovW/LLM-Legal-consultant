@@ -1,4 +1,3 @@
-
 from src.ingestion import load_documents, get_chroma_vectorstore, ingest_documents
 
 
