@@ -4,11 +4,9 @@ from langchain_core.documents import Document
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from pathlib import Path
 
-from src.config import DATA_DIR
-from src.config import CHROMA_PATH, EMBEDDING_MODEL
-
-def load_documents() -> list[Document]:
+def load_documents(data_dir: Path | None = None) -> list[Document]:
     """
     Loads files from DATA_DIR directory.
     
@@ -20,9 +18,13 @@ def load_documents() -> list[Document]:
     returns:
         list[Documents]: list of documents with metadata
     """
+    if data_dir is None:
+        from src.config import DATA_DIR
+        data_dir = DATA_DIR
+    
     documents = []
     
-    for file_path in DATA_DIR.glob("*.txt"):
+    for file_path in data_dir.glob("*.txt"):
         with open(file_path, 'r', encoding='utf-8') as f:
             text = f.read()
             
@@ -49,7 +51,10 @@ def load_documents() -> list[Document]:
             
     return documents
 
-def get_chroma_vectorstore() -> Chroma:
+def get_chroma_vectorstore(
+        chroma_persist_dir: Path | None = None,
+        embedding_model: str | None = None
+    ) -> Chroma:
     """
     Returns initialized ChromaDB.
     
@@ -59,6 +64,13 @@ def get_chroma_vectorstore() -> Chroma:
     Returns:
         Chroma: ChromaDB index.
     """
+    if chroma_persist_dir is None:
+        from src.config import CHROMA_PATH
+        chroma_persist_dir = CHROMA_PATH
+    
+    if embedding_model is None:
+        from src.config import EMBEDDING_MODEL
+        embedding_model = EMBEDDING_MODEL
     
     embeddings = HuggingFaceEmbeddings(
         model_name=EMBEDDING_MODEL
