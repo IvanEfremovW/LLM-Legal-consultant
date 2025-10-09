@@ -22,10 +22,10 @@ Built for lawyers, compliance officers, HR professionals, and citizens seeking r
 
 - Source-grounded answers via RAG over a structured legal corpus.
 - Qwen3-4B backbone: Efficient 4B-parameter open-source LLM with strong Russian language support.
-## Architecture
 - Semantic search: ChromaDB-powered vector retrieval with embeddings from intfloat/multilingual-e5-large.
 - Citation-aware responses: Every answer references relevant legal articles.
-
+  
+## Architecture
 ```mermaid
 graph LR
 A[User] --> B(Gradio UI)
