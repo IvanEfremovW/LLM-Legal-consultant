@@ -27,7 +27,12 @@ llm = HuggingFacePipeline.from_model_id(
     task="text-generation",
     device_map="auto",
     model_kwargs=dict(quantization_config=quantization_config),
-    pipeline_kwargs=dict(max_new_tokens=512, repetition_penalty=1.2, temperature=0.3),
+    pipeline_kwargs=dict(
+        max_new_tokens=512, 
+        repetition_penalty=1.2, 
+        temperature=0.3,
+        return_full_text=False,
+    ),
 )
 
 chat_model = ChatHuggingFace(llm=llm)
